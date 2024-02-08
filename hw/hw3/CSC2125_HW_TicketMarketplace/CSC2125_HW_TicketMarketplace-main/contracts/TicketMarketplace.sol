@@ -16,6 +16,15 @@ contract TicketMarketplace is ITicketMarketplace {
     TicketNFT public ticketNFT;
     uint128 public eventId;
     
+    struct Event {
+        uint128 nextTicketToSell;
+        uint128 maxTickets;
+        uint256 pricePerTicket;
+        uint256 pricePerTicketERC20;
+    }
+    
+    mapping (uint128 => Event) public events;
+
     constructor(address _erc20Address) {
         erc20Address = _erc20Address;
         _owner = msg.sender;
@@ -40,30 +49,83 @@ contract TicketMarketplace is ITicketMarketplace {
     }
 
     function createEvent(uint128 maxTickets, uint256 pricePerTicket, uint256 pricePerTicketERC20) external override {
-        // placeholder
-    }
+        // Authorization check
+        if (msg.sender != _owner) 
+            revert("Unauthorized access");
 
+        // Create a new event
+        events[eventId] = Event(0, maxTickets, pricePerTicket, pricePerTicketERC20);
+        eventId += 1;
+
+        emit EventCreated(eventId, maxTickets, pricePerTicket, pricePerTicketERC20);
+    }
+    
     function setMaxTicketsForEvent(uint128 eventId, uint128 newMaxTickets) external override {
-        // placeholder
+        // Authorization check
+        if (msg.sender != _owner) 
+            revert("Unauthorized access");
+        
+        // Check validity of the new maxTickets
+        if (events[eventId].maxTickets > newMaxTickets)
+            revert("The new number of max tickets is too small!");
+
+        // Update the maxTickets for the event
+        events[eventId].maxTickets = newMaxTickets;
+        emit MaxTicketsUpdate(eventId, newMaxTickets);
     }
 
     function setPriceForTicketETH(uint128 eventId, uint256 price) external override {
-        // placeholder
+        // Authorization check
+        if (msg.sender != _owner) 
+            revert("Unauthorized access");
+
+        // Update the price for the ticket in ETH
+        events[eventId].pricePerTicket = price;
+        emit PriceUpdate(eventId, price, "ETH");
     }
 
     function setPriceForTicketERC20(uint128 eventId, uint256 price) external override {
-        // placeholder
-    }
+        // Authorization check
+        if (msg.sender != _owner) 
+            revert("Unauthorized access");
 
-    function buyTickets(uint128 eventId, uint128 ticketCount) payable external override {
-        // placeholder
-    }
-
-    function buyTicketsERC20(uint128 eventId, uint128 ticketCount) external override {
-        // placeholder
+        // Update the price for the ticket in ERC20
+        events[eventId].pricePerTicketERC20 = price;
+        emit PriceUpdate(eventId, price, "ERC20");
     }
 
     function setERC20Address(address newERC20Address) external override {
+        // Authorization check
+        if (msg.sender != _owner) 
+            revert("Unauthorized access");
+
+        erc20Address = newERC20Address;
+
+        emit ERC20AddressUpdate(newERC20Address);
+    }
+
+    function buyTickets(uint128 eventId, uint128 ticketCount) payable external override {
+        // no owner check.
+
+        // check for overflow
+        if (ticketCount > (type(uint256).max / events[eventId].pricePerTicket)) {
+            revert("Overflow happened while calculating the total price of tickets. Try buying smaller number of tickets.");
+        }
+
+        // check if the user has enough funds
+        if (msg.value < (events[eventId].pricePerTicket * ticketCount)) {
+            revert("Not enough funds supplied to buy the specified number of tickets.");
+        }
+
+        // check if we have enough tickets to sell
+        if (events[eventId].maxTickets < (events[eventId].nextTicketToSell + ticketCount)) {
+            revert("We don't have that many tickets left to sell!");
+        }
+
+        // TODO: mint tickets
+    }
+
+    function buyTicketsERC20(uint128 eventId, uint128 ticketCount) external override {
         // placeholder
     }
 }

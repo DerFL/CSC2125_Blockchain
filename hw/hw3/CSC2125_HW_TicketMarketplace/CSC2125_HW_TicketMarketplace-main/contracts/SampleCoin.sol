@@ -10,8 +10,8 @@ contract SampleCoin is ERC20 {
     // reference: https://docs.openzeppelin.com/contracts/5.x/erc20
     // OpenZeppelin docs | ERC20
 
-    constructor() ERC20("SampleCoin", "SCN"){
+    constructor() ERC20("SampleCoin", "SPC"){
         // TODO: idk how to do this without hardcoding the amount at the moment...
-        _mint(msg.sender, 100000000000000000000);
+        _mint(msg.sender, 1e20);
     }
 }
