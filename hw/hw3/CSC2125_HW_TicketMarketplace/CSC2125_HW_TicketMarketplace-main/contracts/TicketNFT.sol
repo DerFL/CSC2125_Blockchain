@@ -11,7 +11,7 @@ contract TicketNFT is ERC1155, ITicketNFT {
     // your code goes here (you can do it!)
     // Reference: https://docs.openzeppelin.com/contracts/5.x/erc1155
     // OpenZeppelin docs | ERC1155
-    
+
     address private _owner;
 
     constructor(address marketplaceOwner) ERC1155("https://api.ticketnft.com/ticket/{id}.json") {
@@ -24,6 +24,9 @@ contract TicketNFT is ERC1155, ITicketNFT {
     }
 
     function mintFromMarketPlace(address to, uint256 nftId) external override {
-        // Intentionally left empty
+        // _mint(to: address, id: uint256, amount: uint256, data: bytes)
+        // Passing an empty string as according to "https://piazza.com/class/lqobnxugstjce/post/19"
+        // Also according to ERC1155: https://docs.openzeppelin.com/contracts/5.x/erc1155#_mint 
+        _mint(to, nftId, 1, "");
     }
 }
