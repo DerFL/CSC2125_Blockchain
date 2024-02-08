@@ -1,4 +1,4 @@
-# CSC2125: Topics in Software Engineering: Blockchain
+# CSC2125: Topics in Software Engineering: Blockchain Technologies
 
 This repo collects docs, readings, and notes for CSC2125 at UofT
 
@@ -7,3 +7,5 @@ This repo collects docs, readings, and notes for CSC2125 at UofT
 <sub><sup>I took this course because I was missing a Non-core AI FTE credit...</sup></sub>
 
 <sub><sup><sub><sup>REEEeeeee</sup></sub></sup></sub>
+
+<sub><sup><sub><sup>Course content has been interesting so far tho...</sup></sub></sup></sub>
